@@ -39,25 +39,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late TimeOfDay startTime;
-  late TimeOfDay endTime;
-  late double lightSensorThreshold;
-  late bool byMotionSensor;
-  late bool byTime;
-  late bool isTurnon;
   bool isLoading = true;
+  bool isSaving = false;
   DatabaseReference ref = FirebaseDatabase.instance.ref();
   late Data data;
   @override
   void initState() {
     () async {
       data = Data.fromJson((await ref.get()).value as Map<String, dynamic>);
-      startTime = data.TimeRange.start;
-      endTime = data.TimeRange.end;
-      lightSensorThreshold = data.Light;
-      byMotionSensor = data.MotionSensor;
-      byTime = data.OpeningTime;
-      isTurnon = data.System;
       setState(() {
         isLoading = false;
       });
@@ -100,20 +89,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         textAlign: TextAlign.right,
                       ),
                     ),
-                    Tooltip(
-                      message: 'เปิดปิดระบบ',
-                      child: Switch(
-                        value: isTurnon,
-                        onChanged: (value) {
-                          setState(() {
-                            isTurnon = value;
-                          });
-                        },
-                      ),
+                    Switch(
+                      value: data.System,
+                      onChanged: (value) {
+                        setState(() {
+                          data.System = value;
+                        });
+                      },
                     ),
                     SizedBox(
                       width: 200,
-                      child: isTurnon
+                      child: data.System
                           ? const Text(
                               'On',
                               style: TextStyle(color: Colors.blue),
@@ -136,79 +122,66 @@ class _MyHomePageState extends State<MyHomePage> {
                         textAlign: TextAlign.right,
                       ),
                     ),
-                    Tooltip(
-                      message: 'ตั้งเวลาเปิดปิดหลอดไฟ',
-                      child: Switch(
-                        value: byTime,
-                        onChanged: (value) {
-                          setState(() {
-                            byTime = value;
-                          });
-                        },
-                      ),
+                    Switch(
+                      value: data.OpeningTime,
+                      onChanged: (value) {
+                        setState(() {
+                          data.OpeningTime = value;
+                        });
+                      },
                     ),
                     SizedBox(
                       width: 200,
-                      child: byTime
+                      child: data.OpeningTime
                           ? Row(
                               children: [
-                                Tooltip(
-                                  message: 'ตั้งเวลาเปิดไฟ',
-                                  child: TextButton(
-                                    onPressed: () async {
-                                      TimeOfDay? newTime = await showTimePicker(
-                                        context: context,
-                                        initialTime: startTime,
-                                        builder: (context, child) {
-                                          return MediaQuery(
-                                            data: MediaQuery.of(context)
-                                                .copyWith(
-                                                    alwaysUse24HourFormat:
-                                                        true),
-                                            child: child ?? Container(),
-                                          );
-                                        },
-                                      );
-                                      if (newTime != null) {
-                                        setState(() {
-                                          startTime = newTime;
-                                        });
-                                      }
-                                    },
-                                    child: Text(
-                                        '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}'),
-                                  ),
+                                TextButton(
+                                  onPressed: () async {
+                                    TimeOfDay? newTime = await showTimePicker(
+                                      context: context,
+                                      initialTime: data.TimeRange.start,
+                                      builder: (context, child) {
+                                        return MediaQuery(
+                                          data: MediaQuery.of(context).copyWith(
+                                              alwaysUse24HourFormat: true),
+                                          child: child ?? Container(),
+                                        );
+                                      },
+                                    );
+                                    if (newTime != null) {
+                                      setState(() {
+                                        data.TimeRange.start = newTime;
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                      '${data.TimeRange.start.hour.toString().padLeft(2, '0')}:${data.TimeRange.start.minute.toString().padLeft(2, '0')}'),
                                 ),
                                 const Text(
                                   '-',
                                   style: TextStyle(color: Colors.blue),
                                 ),
-                                Tooltip(
-                                  message: 'ตั้งเวลาปิดไฟ',
-                                  child: TextButton(
-                                    onPressed: () async {
-                                      TimeOfDay? newTime = await showTimePicker(
-                                        context: context,
-                                        initialTime: endTime,
-                                        builder: (context, child) {
-                                          return MediaQuery(
-                                            data: MediaQuery.of(context)
-                                                .copyWith(
-                                                    alwaysUse24HourFormat:
-                                                        true),
-                                            child: child ?? Container(),
-                                          );
-                                        },
-                                      );
-                                      if (newTime != null) {
-                                        setState(() {
-                                          endTime = newTime;
-                                        });
-                                      }
-                                    },
-                                    child: Text(
-                                        '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}'),
-                                  ),
+                                TextButton(
+                                  onPressed: () async {
+                                    TimeOfDay? newTime = await showTimePicker(
+                                      context: context,
+                                      initialTime: data.TimeRange.end,
+                                      builder: (context, child) {
+                                        return MediaQuery(
+                                          data: MediaQuery.of(context).copyWith(
+                                              alwaysUse24HourFormat: true),
+                                          child: child ?? Container(),
+                                        );
+                                      },
+                                    );
+                                    if (newTime != null) {
+                                      setState(() {
+                                        data.TimeRange.end = newTime;
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                      '${data.TimeRange.end.hour.toString().padLeft(2, '0')}:${data.TimeRange.end.minute.toString().padLeft(2, '0')}'),
                                 ),
                               ],
                             )
@@ -229,20 +202,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         textAlign: TextAlign.right,
                       ),
                     ),
-                    Tooltip(
-                      message: 'เปิดปิดหลอดไฟด้วย เซนเวอร์จับการเคลื่อนไหว',
-                      child: Switch(
-                        value: byMotionSensor,
-                        onChanged: (value) {
-                          setState(() {
-                            byMotionSensor = value;
-                          });
-                        },
-                      ),
+                    Switch(
+                      value: data.MotionSensor,
+                      onChanged: (value) {
+                        setState(() {
+                          data.MotionSensor = value;
+                        });
+                      },
                     ),
                     SizedBox(
                       width: 200,
-                      child: byMotionSensor
+                      child: data.MotionSensor
                           ? const Text(
                               'On',
                               style: TextStyle(color: Colors.blue),
@@ -264,27 +234,61 @@ class _MyHomePageState extends State<MyHomePage> {
                         textAlign: TextAlign.right,
                       ),
                     ),
-                    Tooltip(
-                      message: 'ปรับค่าขั้นต่ำของแสงสว่างที่จะทำให้หลอดไฟติด',
-                      child: Slider(
-                        value: lightSensorThreshold,
-                        max: 100,
-                        min: 0,
-                        divisions: 100,
-                        label: lightSensorThreshold.round().toString(),
-                        onChanged: (value) {
-                          setState(() {
-                            lightSensorThreshold = value;
-                          });
-                        },
-                      ),
+                    Slider(
+                      value: data.Light,
+                      max: 100,
+                      min: 0,
+                      divisions: 100,
+                      label: data.Light.round().toString(),
+                      onChanged: (value) {
+                        setState(() {
+                          data.Light = value;
+                        });
+                      },
                     ),
                     SizedBox(
                       width: 300,
-                      child: Text(
-                          'Turn on when > ${lightSensorThreshold.round()} %'),
+                      child: Text('Turn on when < ${data.Light.round()} %'),
                     ),
                   ],
+                ),
+                const SizedBox(height: 30),
+                SizedBox(
+                  height: 50,
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: CircularProgressIndicator())
+                      : ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              isSaving = true;
+                            });
+                            await data.save();
+                            await Future.delayed(const Duration(seconds: 1));
+                            setState(() {
+                              isSaving = false;
+                            });
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Save'),
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 30),
+                const Divider(
+                  indent: 50,
+                  endIndent: 50,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  'Statistics',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Text('Human Count: ${data.Human}'),
