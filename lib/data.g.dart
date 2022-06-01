@@ -12,6 +12,7 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
       json['OpeningTime'] as bool,
       json['System'] as bool,
       OpenTimeRange.fromJson(json['TimeRange'] as Map<String, dynamic>),
+      json['update'] as bool,
     );
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
@@ -20,6 +21,7 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
       'OpeningTime': instance.OpeningTime,
       'System': instance.System,
       'TimeRange': instance.TimeRange.toJson(),
+      'update': instance.update,
     };
 
 OpenTimeRange _$OpenTimeRangeFromJson(Map<String, dynamic> json) =>

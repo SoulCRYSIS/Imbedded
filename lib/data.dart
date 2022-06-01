@@ -12,12 +12,14 @@ class Data {
   bool OpeningTime;
   bool System;
   OpenTimeRange TimeRange;
+  bool update;
   Data(
     this.Light,
     this.MotionSensor,
     this.OpeningTime,
     this.System,
     this.TimeRange,
+    this.update,
   );
   //Constructor and Function from package 'json_serializable'
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);

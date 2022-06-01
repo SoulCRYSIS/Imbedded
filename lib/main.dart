@@ -359,6 +359,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               setState(() {
                                 isSaving = true;
                               });
+                              data.update = true;
                               await data.save();
                               await Future.delayed(const Duration(seconds: 1));
                               setState(() {
