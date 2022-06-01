@@ -7,7 +7,6 @@ part of 'data.dart';
 // **************************************************************************
 
 Data _$DataFromJson(Map<String, dynamic> json) => Data(
-      json['Human'] as int,
       (json['Light'] as num).toDouble(),
       json['MotionSensor'] as bool,
       json['OpeningTime'] as bool,
@@ -16,7 +15,6 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
     );
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
-      'Human': instance.Human,
       'Light': instance.Light,
       'MotionSensor': instance.MotionSensor,
       'OpeningTime': instance.OpeningTime,

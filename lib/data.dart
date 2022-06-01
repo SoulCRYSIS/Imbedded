@@ -7,14 +7,12 @@ part 'data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Data {
-  int Human;
   double Light;
   bool MotionSensor;
   bool OpeningTime;
   bool System;
   OpenTimeRange TimeRange;
   Data(
-    this.Human,
     this.Light,
     this.MotionSensor,
     this.OpeningTime,
@@ -48,6 +46,7 @@ class OpenTimeRange {
       _$OpenTimeRangeFromJson(json);
   Map<String, dynamic> toJson() => _$OpenTimeRangeToJson(this);
 
+  @JsonKey(ignore: true)
   TimeOfDay get start {
     return TimeOfDay(hour: StartHour, minute: StartMin);
   }
@@ -57,6 +56,7 @@ class OpenTimeRange {
     StartMin = time.minute;
   }
 
+  @JsonKey(ignore: true)
   TimeOfDay get end {
     return TimeOfDay(hour: EndHour, minute: EndMin);
   }
